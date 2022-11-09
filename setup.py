@@ -7,7 +7,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="testproject-python-sdk",
-    version=definitions.get_sdk_version(),
+    version="1.2.3",
     author="Denis Juma",
     author_email="deniskwanusu@gmail.com",
     description="Selenium and Appium powered SDK for TestProject.io",
@@ -23,7 +23,7 @@ setuptools.setup(
     python_requires=">=2.7",
     install_requires=[
         "selenium==3.141.0",
-        "Appium-Python-Client>=1.0.1,<=1.0.2",
+        "Appium-Python-Client==0.52",
         "decorator>=4.4.2",
         "requests>=2.24.0",
         "importlib-metadata>=1.7.0",
