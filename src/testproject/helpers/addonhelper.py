@@ -27,11 +27,11 @@ from src.testproject.sdk.internal.reporter import Reporter
 
 
 class AddonHelper:
-    def __init__(self, agent_client: AgentClient, command_executor: ReportingCommandExecutor):
+    def __init__(self, agent_client, command_executor):
         self._agent_client = agent_client
         self._command_executor = command_executor
 
-    def execute(self, action: ActionProxy, by: By = None, by_value: str = None) -> ActionProxy:
+    def execute(self, action, by=None, by_value=None):
         # Set the locator properties
         action.proxydescriptor.by = by
         action.proxydescriptor.by_value = by_value
@@ -52,17 +52,15 @@ class AddonHelper:
         step_helper.handle_sleep(sleep_timing_type=settings.sleep_timing_type, sleep_time=settings.sleep_time)
 
         # Execute the action
-        response: AddonExecutionResponse = self._agent_client.execute_proxy(action)
+        response = self._agent_client.execute_proxy(action)
 
         # Handling sleep after execution
         step_helper.handle_sleep(
-            sleep_timing_type=settings.sleep_timing_type,
-            sleep_time=settings.sleep_time,
-            step_executed=True,
+            sleep_timing_type=settings.sleep_timing_type, sleep_time=settings.sleep_time, step_executed=True
         )
 
         if response.execution_result_type is not ExecutionResultType.Passed and not settings.invert_result:
-            raise SdkException(f"Error occurred during addon action execution: {response.message}")
+            raise SdkException("Error occurred during addon action execution: {}".format(response.message))
 
         # Update attributes value from response
         for field in response.fields:
@@ -73,7 +71,9 @@ class AddonHelper:
 
             # check if action has an attribute with the name of the field
             if not hasattr(action, field.name):
-                logging.warning(f"Action '{action.proxydescriptor.guid}' does not have a field named '{field.name}'")
+                logging.warning(
+                    "Action '{}' does not have a field named '{}'".format(action.proxydescriptor.guid, field.name)
+                )
                 continue
 
             # update the attribute value with the value from the response
@@ -95,15 +95,13 @@ class AddonHelper:
         # For example:
         #   action.proxydescriptor.classname = io.testproject.something.i.dont.care.TypeRandomPhoneNumber
         #   description is 'Execute TypeRandomPhoneNumber'.
-        description = f'Execute \'{action.proxydescriptor.classname.split(".")[-1]}\''
+        description = "Execute '{}'".format(action.proxydescriptor.classname.split(".")[-1])
 
         element = None
         # If proxy descriptor has the by property and the by property is implemented by TestProject's FindByType...
         if action.proxydescriptor.by and FindByType.has_value(action.proxydescriptor.by):
             element = ElementSearchCriteria(
-                find_by_type=FindByType(action.proxydescriptor.by),
-                by_value=action.proxydescriptor.by_value,
-                index=-1,
+                find_by_type=FindByType(action.proxydescriptor.by), by_value=action.proxydescriptor.by_value, index=-1
             )
         # Creating input/output fields
         input_fields = {f.name: f.value for f in response.fields if not f.is_output}
@@ -111,7 +109,7 @@ class AddonHelper:
         # Manually reporting the addon step with all the information.
         Reporter(command_executor=self._command_executor).step(
             description=description,
-            message=f"{step_message}{os.linesep}",
+            message="{}{}".format(step_message, os.linesep),
             element=element,
             inputs=input_fields,
             outputs=output_fields,

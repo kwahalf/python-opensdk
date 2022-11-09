@@ -35,17 +35,17 @@ class Chrome(BaseDriver):
 
     def __init__(
         self,
-        chrome_options: ChromeOptions = None,
-        desired_capabilities: dict = None,
-        token: str = None,
-        project_name: str = None,
-        job_name: str = None,
-        disable_reports: bool = False,
-        report_type: ReportType = ReportType.CLOUD_AND_LOCAL,
-        agent_url: str = None,
-        report_name: str = None,
-        report_path: str = None,
-        socket_session_timeout: int = AgentClient.NEW_SESSION_SOCKET_TIMEOUT_MS,
+        chrome_options=None,
+        desired_capabilities=None,
+        token=None,
+        project_name=None,
+        job_name=None,
+        disable_reports=False,
+        report_type=ReportType.CLOUD_AND_LOCAL,
+        agent_url=None,
+        report_name=None,
+        report_path=None,
+        socket_session_timeout=AgentClient.NEW_SESSION_SOCKET_TIMEOUT_MS,
     ):
 
         # If no options or capabilities are specified at all, use default ChromeOptions

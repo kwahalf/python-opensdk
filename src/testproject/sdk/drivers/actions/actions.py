@@ -12,15 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 import inspect
+import logging
+
+from selenium.webdriver.common.by import By
 
 from src.testproject.classes import ActionExecutionResponse
 from src.testproject.enums import ExecutionResultType
 from src.testproject.helpers import SeleniumHelper
-from src.testproject.sdk.internal.agent import AgentClient
-from selenium.webdriver.common.by import By
 from src.testproject.sdk.drivers.actions.action_guids import actions
+from src.testproject.sdk.internal.agent import AgentClient
 
 
 class Actions:
@@ -35,18 +36,11 @@ class Actions:
         _timeout (int): timeout for action execution
     """
 
-    def __init__(self, agent_client: AgentClient, timeout: int):
+    def __init__(self, agent_client, timeout):
         self._agent_client = agent_client
         self._timeout = timeout
 
-    def action_execute(
-        self,
-        action_guid: str,
-        body: dict,
-        by: By = None,
-        by_value: str = "",
-        timeout: int = 10000,
-    ) -> ActionExecutionResponse:
+    def action_execute(self, action_guid, body, by=None, by_value="", timeout=10000):
         """Sends HTTP request to Agent
 
         Args:
@@ -66,17 +60,20 @@ class Actions:
             if search_criteria is not None:
                 body["elementSearchCriteria"] = search_criteria.to_json()
             else:
-                logging.error(f"Failure in creating search criteria from locator strategy {by} with value {by_value}")
+                logging.error(
+                    "Failure in creating search criteria from locator strategy {} with value {}".format(by, by_value)
+                )
 
         response = self._agent_client.send_action_execution_request(action_guid, body)
         if response.executionresulttype == ExecutionResultType.Failed:
             logging.warning(
-                f"Failed to execute action '{inspect.stack()[1].function}', "
-                "agent returned the following message: {response.message}"
+                "Failed to execute action '{}', agent returned the following message: {}".format(
+                    inspect.stack()[1].function, response.message
+                )
             )
         return response
 
-    def pause(self, milliseconds: int) -> bool:
+    def pause(self, milliseconds):
         """Pause test execution for the specified duration
 
         Args:

@@ -26,17 +26,14 @@ class CustomCommandExecutor(RemoteConnection, ReportingCommandExecutor):
         remote_server_addr (str): Remote server (Agent) address
     """
 
-    def __init__(self, agent_client: AgentClient, remote_server_addr: str):
+    def __init__(self, agent_client, remote_server_addr):
         RemoteConnection.__init__(self, remote_server_addr=remote_server_addr)
         ReportingCommandExecutor.__init__(
-            self,
-            agent_client=agent_client,
-            command_executor=self,
-            remote_connection=super(),
+            self, agent_client=agent_client, command_executor=self, remote_connection=super()
         )
         self.w3c = self.step_helper.w3c  # Selenium expects the w3c as a class member
 
-    def execute(self, command: str, params: dict, skip_reporting: bool = False):
+    def execute(self, command, params, skip_reporting=False):
         """Execute a Selenium command
 
         Args:

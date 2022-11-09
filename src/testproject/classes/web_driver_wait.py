@@ -1,5 +1,5 @@
-import os
 import json
+import os
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
@@ -53,10 +53,7 @@ class TestProjectWebDriverWait(WebDriverWait):
         # Handle driver timeout
         step_helper.handle_timeout(timeout=step_settings.timeout)
         # Handle sleep before
-        step_helper.handle_sleep(
-            sleep_timing_type=step_settings.sleep_timing_type,
-            sleep_time=step_settings.sleep_time,
-        )
+        step_helper.handle_sleep(sleep_timing_type=step_settings.sleep_timing_type, sleep_time=step_settings.sleep_time)
         # Execute the function with default StepSettings.
         with DriverStepSettings(self._driver, StepSettings()):
             try:
@@ -67,15 +64,11 @@ class TestProjectWebDriverWait(WebDriverWait):
                 timeout_exception = e
         # Handle sleep after
         step_helper.handle_sleep(
-            sleep_timing_type=step_settings.sleep_timing_type,
-            sleep_time=step_settings.sleep_time,
-            step_executed=True,
+            sleep_timing_type=step_settings.sleep_timing_type, sleep_time=step_settings.sleep_time, step_executed=True
         )
         # Handle result
         passed, step_message = step_helper.handle_step_result(
-            step_result=passed,
-            invert_result=step_settings.invert_result,
-            always_pass=step_settings.always_pass,
+            step_result=passed, invert_result=step_settings.invert_result, always_pass=step_settings.always_pass
         )
         # Handle screenshot condition
         screenshot = step_helper.take_screenshot(step_settings.screenshot_condition, passed)
@@ -88,8 +81,8 @@ class TestProjectWebDriverWait(WebDriverWait):
         # Getting all additional step information.
         step_name, step_attributes = self.get_report_details(method)
         self._driver.report().step(
-            description=f"Wait {function_name} {step_name}",
-            message=f"{step_message}{os.linesep}",
+            description="Wait {} {}".format(function_name, step_name),
+            message="{}{}".format(step_message, os.linesep),
             passed=passed,
             inputs=step_attributes,
             screenshot=screenshot,
@@ -125,7 +118,7 @@ class TestProjectWebDriverWait(WebDriverWait):
         return step_name, attributes_dict
 
     @staticmethod
-    def get_user_attributes(cls, exclude_methods=True) -> list:
+    def get_user_attributes(cls, exclude_methods=True):
         """Gets a class's user defined attributes, ignores methods by default.
 
         Examples:

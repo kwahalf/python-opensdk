@@ -20,7 +20,7 @@ from src.testproject.helpers.activesessionhelper import get_active_driver_instan
 from src.testproject.sdk.exceptions import SdkException
 
 
-def behave_reporter(func=None, *, screenshot: bool = False):
+def behave_reporter(func=None, screenshot=False, *_):
     """Enables automatic logging of Gherkin syntax, including a screenshot when screenshot argument is True, by default
     screenshots are taken only when a step fails.
     Args:
@@ -38,7 +38,7 @@ def behave_reporter(func=None, *, screenshot: bool = False):
             try:
                 driver = get_active_driver_instance()
             except SdkException as err:
-                logging.error(f"No valid WebDriver found: {err} - Reports are disabled!")
+                logging.error("No valid WebDriver found: {} - Reports are disabled!".format(err))
 
             if driver is not None:
 
@@ -78,12 +78,7 @@ def report_step(driver, step, screenshot):
     step_message = (
         "{} {}".format(type(step.exception).__name__, str(step.exception)) if not step_status else step_description
     )
-    driver.report().step(
-        description=step_description,
-        message=step_message,
-        passed=step_status,
-        screenshot=screenshot,
-    )
+    driver.report().step(description=step_description, message=step_message, passed=step_status, screenshot=screenshot)
 
 
 def report_test(driver, scenario):

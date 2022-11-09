@@ -36,15 +36,7 @@ class DriverCommandReport:
         _message (str): The message to include in the result
     """
 
-    def __init__(
-        self,
-        command: str,
-        command_params: dict,
-        result: dict,
-        passed: bool,
-        screenshot: str = None,
-        message: str = None,
-    ):
+    def __init__(self, command, command_params, result, passed, screenshot=None, message=None):
         self._command = command
         self._command_params = command_params
         self._result = result
@@ -53,42 +45,42 @@ class DriverCommandReport:
         self._message = message
 
     @property
-    def command(self) -> str:
+    def command(self):
         """Getter for the command property"""
         return self._command
 
     @property
-    def command_params(self) -> dict:
+    def command_params(self):
         """Getter for the command_params property"""
         return self._command_params
 
     @property
-    def result(self) -> dict:
+    def result(self):
         """Getter for the result property"""
         return self._result
 
     @property
-    def passed(self) -> bool:
+    def passed(self):
         """Getter for the passed property"""
         return self._passed
 
     @property
-    def screenshot(self) -> str:
+    def screenshot(self):
         """Getter for the screenshot property"""
         return self._screenshot
 
     @screenshot.setter
-    def screenshot(self, value: str):
+    def screenshot(self, value):
         """Setter for the screenshot property"""
         self._screenshot = value
 
     @property
-    def message(self) -> str:
+    def message(self):
         """Getter for the message property"""
         return self._message
 
     @message.setter
-    def message(self, value: str):
+    def message(self, value):
         """Setter for the message property"""
         self._message = value
 
@@ -126,13 +118,4 @@ class DriverCommandReport:
 
     def __hash__(self):
         """Implement hash to allow objects to be used in sets and dicts"""
-        return hash(
-            (
-                self.command,
-                self.command_params,
-                self.result,
-                self.passed,
-                self.screenshot,
-                self.message,
-            )
-        )
+        return hash((self.command, self.command_params, self.result, self.passed, self.screenshot, self.message))

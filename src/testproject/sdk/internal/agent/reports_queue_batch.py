@@ -14,14 +14,15 @@
 import collections
 import logging
 import os
-from src.testproject.sdk.internal.agent.reports_queue import ReportsQueue, QueueItem
+
+from src.testproject.sdk.internal.agent.reports_queue import QueueItem, ReportsQueue
 
 
 class ReportsQueueBatch(ReportsQueue):
     MAX_REPORT_BATCH_SIZE = 10
     TP_MAX_BATCH_SIZE_VARIABLE_NAME = "TP_MAX_REPORTS_BATCH_SIZE"
 
-    def __init__(self, token: str, url: [str]):
+    def __init__(self, token, url):
         super().__init__(token)
         self._url = url
         self.__batch_list = collections.deque()
@@ -34,16 +35,18 @@ class ReportsQueueBatch(ReportsQueue):
             else:
                 self.__max_batch_size = self.MAX_REPORT_BATCH_SIZE
         except KeyError:
-            logging.warning("The environment variable {TP_MAX_BATCH_SIZE_VARIABLE_NAME} is not defined.")
+            logging.warning("The environment variable {} is not defined.".format(self.TP_MAX_BATCH_SIZE_VARIABLE_NAME))
             self.__max_batch_size = self.MAX_REPORT_BATCH_SIZE
         except ValueError:
-            logging.warning("The environment variable {TP_MAX_BATCH_SIZE_VARIABLE_NAME} value must be an integer.")
+            logging.warning(
+                "The environment variable {} value must be an integer.".format(self.TP_MAX_BATCH_SIZE_VARIABLE_NAME)
+            )
             self.__max_batch_size = self.MAX_REPORT_BATCH_SIZE
         except Exception:
             self.__max_batch_size = self.MAX_REPORT_BATCH_SIZE
-        logging.info("The maximum reports batch size is defined as {self.__max_batch_size}.")
+        logging.info("The maximum reports batch size is defined as {}.".format(self.__max_batch_size))
 
-    def _handle_report(self, item: [object]):
+    def _handle_report(self, item):
         self.__batch_list.append(item.report_as_json)
 
         if self.__batch_list.__len__() == 0:

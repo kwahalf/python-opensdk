@@ -8,19 +8,19 @@ with open("README.rst", "r") as fh:
 setuptools.setup(
     name="testproject-python-sdk",
     version=definitions.get_sdk_version(),
-    author="TestProject",
-    author_email="contact@testproject.io",
+    author="Denis Juma",
+    author_email="deniskwanusu@gmail.com",
     description="Selenium and Appium powered SDK for TestProject.io",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="https://github.com/testproject-io/python-opensdk",
     packages=setuptools.find_packages(exclude=["tests", "tests.*", "proxy_examples", "proxy_examples.*"]),
     classifiers=[
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python > 2.7",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.6",
+    python_requires=">=2.7",
     install_requires=[
         "selenium==3.141.0",
         "Appium-Python-Client>=1.0.1,<=1.0.2",

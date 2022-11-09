@@ -29,28 +29,28 @@ class AgentSession:
         _capabilities (str): driver-specific capabilities
     """
 
-    def __init__(self, remote_address: str, session_id: str, dialect: str, capabilities: dict):
+    def __init__(self, remote_address, session_id, dialect, capabilities):
         self._remote_address = remote_address
         self._session_id = session_id
         self._dialect = dialect
         self._capabilities = capabilities
 
     @property
-    def remote_address(self) -> str:
+    def remote_address(self):
         """Getter for the Agent address"""
         return self._remote_address
 
     @property
-    def session_id(self) -> str:
+    def session_id(self):
         """Getter for the current session ID"""
         return self._session_id
 
     @property
-    def dialect(self) -> str:
+    def dialect(self):
         """Getter for the session dialect"""
         return self._dialect
 
     @property
-    def capabilities(self) -> dict:
+    def capabilities(self):
         """Getter for the driver capabilities"""
         return self._capabilities

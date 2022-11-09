@@ -31,13 +31,7 @@ class OperationResult:
 
     """
 
-    def __init__(
-        self,
-        passed: bool = False,
-        status_code: int = 500,
-        message: str = "",
-        data: Optional[dict] = None,
-    ):
+    def __init__(self, passed=False, status_code=500, message="", data=None):
         self._passed = passed
         self._status_code = status_code
         self._message = message

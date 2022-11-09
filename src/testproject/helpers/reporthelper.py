@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
 import logging
 import ntpath
 import os
-import inspect
 
 from src.testproject.enums import EnvironmentVariable, ReportNamingElement
 
@@ -24,7 +24,7 @@ class ReportHelper:
     """Provides helper functions used in reporting command, tests and steps"""
 
     @classmethod
-    def infer_test_name(cls) -> str:
+    def infer_test_name(cls):
         """Tries to infer the test name from the information in the decorator or given to us by pytest or unittest
 
         Returns:
@@ -44,12 +44,12 @@ class ReportHelper:
             # Try finding the right entry in the call stack (for unittest or when no testing framework is used)
             logging.debug("Attempting to infer test name using inspect.stack()")
             result = cls.__find_name_in_call_stack_for(ReportNamingElement.Test)
-            logging.debug(f"Inferred test name '{result}' from inspect.stack()")
+            logging.debug("Inferred test name '{}' from inspect.stack()".format(result))
 
         return result if result is not None else "Unnamed Test"
 
     @classmethod
-    def infer_project_name(cls) -> str:
+    def infer_project_name(cls):
         """Tries to infer the project name from the information in the decorator or given to us by pytest or unittest
 
         Returns:
@@ -69,12 +69,12 @@ class ReportHelper:
             # Try finding the right entry in the call stack (for unittest or when no testing framework is used)
             logging.debug("Attempting to infer project name using inspect.stack()")
             result = cls.__find_name_in_call_stack_for(ReportNamingElement.Project)
-            logging.debug(f"Inferred project name '{result}' from inspect.stack()")
+            logging.debug("Inferred project name '{}' from inspect.stack()".format(result))
 
         return result if result is not None else "Unnamed Project"
 
     @classmethod
-    def infer_job_name(cls) -> str:
+    def infer_job_name(cls):
         """Tries to infer the job name from the information in the decorator or given to us by pytest or unittest
 
         Returns:
@@ -94,12 +94,12 @@ class ReportHelper:
             # Try finding the right entry in the call stack (for unittest or when no testing framework is used)
             logging.debug("Attempting to infer job name using inspect.stack()")
             result = cls.__find_name_in_call_stack_for(ReportNamingElement.Job)
-            logging.debug(f"Inferred job name '{result}' from inspect.stack()")
+            logging.debug("Inferred job name '{}' from inspect.stack()".format(result))
 
         return result if result is not None else "Unnamed Job"
 
     @classmethod
-    def infer_name_from_pytest_info_for(cls, pytest_info: str, element_to_find: ReportNamingElement):
+    def infer_name_from_pytest_info_for(cls, pytest_info, element_to_find):
         """Uses the test info stored by pytest to infer a project, job or test name
 
         Args:
@@ -128,7 +128,7 @@ class ReportHelper:
         return None
 
     @classmethod
-    def __find_name_in_call_stack_for(cls, element_to_find: ReportNamingElement) -> str:
+    def __find_name_in_call_stack_for(cls, element_to_find):
         """Uses the current call stack to try and infer a project, job or test name
 
         Args:
@@ -140,10 +140,7 @@ class ReportHelper:
         is_unittest = cls.__detect_unittest()
 
         if is_unittest:
-            if element_to_find in [
-                ReportNamingElement.Project,
-                ReportNamingElement.Job,
-            ]:
+            if element_to_find in [ReportNamingElement.Project, ReportNamingElement.Job]:
                 # A driver can be initialized inside a test method, but also in a fixture method
                 # Therefore we want to look for all these methods when we try to infer project and job names
                 # (since project and job names are sent to the Agent upon driver creation)
@@ -194,7 +191,7 @@ class ReportHelper:
                     inside_module = True
 
     @classmethod
-    def __detect_unittest(cls) -> bool:
+    def __detect_unittest(cls):
         """Utility method that traverses the call stack and checks if unittest was invoked
 
         Returns:
@@ -210,7 +207,7 @@ class ReportHelper:
         return False
 
     @classmethod
-    def find_unittest_teardown(cls) -> bool:
+    def find_unittest_teardown(cls):
         """Utility method that traverses the call stack and checks if unittest was invoked
 
         Returns:

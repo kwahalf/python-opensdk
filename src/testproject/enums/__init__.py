@@ -1,10 +1,10 @@
-from .executionresulttype import ExecutionResultType
+from .environmentvariable import EnvironmentVariable
 from .executionfailuretype import ExecutionFailureType
+from .executionresulttype import ExecutionResultType
 from .findbytype import FindByType
 from .reportnamingelement import ReportNamingElement
-from .environmentvariable import EnvironmentVariable
-from .sleep_timing_type import SleepTimingType
 from .screenshot_condition_type import TakeScreenshotConditionType
+from .sleep_timing_type import SleepTimingType
 
 __all__ = [
     "ExecutionResultType",

@@ -33,7 +33,7 @@ class DriverStepSettings:
 
     """
 
-    def __init__(self, driver, step_settings: StepSettings):
+    def __init__(self, driver, step_settings):
         """Initializes the 'with' statement."""
         self.previous_settings = driver.command_executor.settings
         self.driver = driver

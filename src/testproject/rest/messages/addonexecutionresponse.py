@@ -24,42 +24,37 @@ class AddonExecutionResponse:
         _fields (list): A potentially updated list of fields
     """
 
-    def __init__(
-        self,
-        execution_result_type: ExecutionResultType = None,
-        message: str = None,
-        fields: list = None,
-    ):
+    def __init__(self, execution_result_type=None, message=None, fields=None):
         self._execution_result_type = execution_result_type
         self._message = message
         self._fields = fields
 
     @property
-    def execution_result_type(self) -> ExecutionResultType:
+    def execution_result_type(self):
         """Getter for the execution result type"""
         return self._execution_result_type
 
     @execution_result_type.setter
-    def execution_result_type(self, value: ExecutionResultType):
+    def execution_result_type(self, value):
         """Setter for the execution result type"""
         self._execution_result_type = value
 
     @property
-    def message(self) -> str:
+    def message(self):
         """Getter for the action execution response message"""
         return self._message
 
     @message.setter
-    def message(self, value: str):
+    def message(self, value):
         """Setter for the action execution response message"""
         self._message = value
 
     @property
-    def fields(self) -> list:
+    def fields(self):
         """Getter for the list of action execution response fields"""
         return self._fields
 
     @fields.setter
-    def fields(self, value: list):
+    def fields(self, value):
         """Setter for the list of action execution response fields"""
         self._fields = value

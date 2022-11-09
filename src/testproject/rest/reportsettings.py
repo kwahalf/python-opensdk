@@ -30,12 +30,7 @@ class ReportSettings:
     """
 
     def __init__(
-        self,
-        project_name: str,
-        job_name: str,
-        report_type: ReportType = ReportType.CLOUD_AND_LOCAL,
-        report_name: str = None,
-        report_path: str = None,
+        self, project_name, job_name, report_type=ReportType.CLOUD_AND_LOCAL, report_name=None, report_path=None
     ):
         self._project_name = project_name
         self._job_name = job_name
@@ -44,27 +39,27 @@ class ReportSettings:
         self._report_path = report_path
 
     @property
-    def project_name(self) -> str:
+    def project_name(self):
         """Getter for the project name"""
         return self._project_name
 
     @property
-    def job_name(self) -> str:
+    def job_name(self):
         """Getter for the job name"""
         return self._job_name
 
     @property
-    def report_type(self) -> ReportType:
+    def report_type(self):
         """Getter for the report type"""
         return self._report_type
 
     @property
-    def report_name(self) -> str:
+    def report_name(self):
         """Getter for the report type"""
         return self._report_name
 
     @property
-    def report_path(self) -> str:
+    def report_path(self):
         """Getter for the report type"""
         return self._report_path
 

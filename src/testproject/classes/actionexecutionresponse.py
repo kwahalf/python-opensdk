@@ -29,42 +29,37 @@ class ActionExecutionResponse:
         _outputs (dict): Results of the action execution in key-value pairs
     """
 
-    def __init__(
-        self,
-        executionresulttype: ExecutionResultType = ExecutionResultType.NoResult,
-        message: str = "",
-        outputs: dict = None,
-    ):
+    def __init__(self, executionresulttype=ExecutionResultType.NoResult, message="", outputs=None):
         self._executionresulttype = executionresulttype
         self._message = message
         self._outputs = outputs
 
     @property
-    def executionresulttype(self) -> ExecutionResultType:
+    def executionresulttype(self):
         """Getter for the action execution result type"""
         return self._executionresulttype
 
     @executionresulttype.setter
-    def executionresulttype(self, value: ExecutionResultType):
+    def executionresulttype(self, value):
         """Setter for the action execution result type"""
         self._executionresulttype = value
 
     @property
-    def message(self) -> str:
+    def message(self):
         """Getter for the action execution response message"""
         return self._message
 
     @message.setter
-    def message(self, value: str):
+    def message(self, value):
         """Setter for the action execution response message"""
         self._message = value
 
     @property
-    def outputs(self) -> dict:
+    def outputs(self):
         """Getter for the action execution response outputs"""
         return self._outputs
 
     @outputs.setter
-    def outputs(self, value: dict):
+    def outputs(self, value):
         """Setter for the action execution response outputs"""
         self._outputs = value

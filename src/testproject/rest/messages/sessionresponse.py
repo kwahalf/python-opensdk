@@ -35,16 +35,16 @@ class SessionResponse:
 
     def __init__(
         self,
-        dev_socket_port: int,
-        server_address: str,
-        session_id: str,
-        dialect: str,
-        capabilities: dict,
-        agent_version: str,
-        local_report: str,
-        local_report_url: str,
-        uuid: str,
-        warnings: list,
+        dev_socket_port,
+        server_address,
+        session_id,
+        dialect,
+        capabilities,
+        agent_version,
+        local_report,
+        local_report_url,
+        uuid,
+        warnings,
     ):
         self._dev_socket_port = dev_socket_port
         self._server_address = server_address
@@ -58,17 +58,17 @@ class SessionResponse:
         self._warnings = warnings
 
     @property
-    def dev_socket_port(self) -> int:
+    def dev_socket_port(self):
         """Getter for the development socket port number"""
         return self._dev_socket_port
 
     @property
-    def server_address(self) -> str:
+    def server_address(self):
         """Getter for the Agent address"""
         return self._server_address
 
     @property
-    def session_id(self) -> str:
+    def session_id(self):
         """Getter for the unique session ID"""
         return self._session_id
 
@@ -78,31 +78,31 @@ class SessionResponse:
         return self._dialect
 
     @property
-    def capabilities(self) -> dict:
+    def capabilities(self):
         """Getter for the driver session capabilities"""
         return self._capabilities
 
     @property
-    def agent_version(self) -> str:
+    def agent_version(self):
         """Getter for the Agent version"""
         return self._agent_version
 
     @property
-    def local_report(self) -> str:
+    def local_report(self):
         """Getter for the Local Report"""
         return self._local_report
 
     @property
-    def local_report_url(self) -> str:
+    def local_report_url(self):
         """Getter for the Local Report URL"""
         return self._local_report_url
 
     @property
-    def uuid(self) -> str:
+    def uuid(self):
         """Getter for the returned UUID"""
         return self._uuid
 
     @property
-    def warnings(self) -> list:
+    def warnings(self):
         """Getter for the returned warnings"""
         return self._warnings

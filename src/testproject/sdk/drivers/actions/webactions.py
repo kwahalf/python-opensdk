@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from selenium.webdriver.common.by import By
+
 from src.testproject.enums import ExecutionResultType
 from src.testproject.sdk.drivers.actions import DriverActions
-from src.testproject.sdk.internal.agent import AgentClient
-from selenium.webdriver.common.by import By
 from src.testproject.sdk.drivers.actions.action_guids import web_actions
+from src.testproject.sdk.internal.agent import AgentClient
 
 
 class WebActions(DriverActions):
@@ -27,10 +28,10 @@ class WebActions(DriverActions):
         timeout (int): timeout for action execution
     """
 
-    def __init__(self, agent_client: AgentClient, timeout: int):
+    def __init__(self, agent_client, timeout):
         super().__init__(agent_client, timeout)
 
-    def move_mouse_to_element(self, by: By, by_value: str) -> bool:
+    def move_mouse_to_element(self, by, by_value):
         """Moves the mouse to the middle of an element and scrolls it into view
 
         Args:
@@ -43,7 +44,7 @@ class WebActions(DriverActions):
         response = self.action_execute(web_actions["MOVE_MOUSE_TO_ELEMENT_ID"], {}, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def navigate_forward(self) -> bool:
+    def navigate_forward(self):
         """Navigate forward
 
         Returns:
@@ -52,7 +53,7 @@ class WebActions(DriverActions):
         response = self.action_execute(web_actions["NAVIGATE_FORWARD_ID"], {}, None, "")
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def navigate_back(self) -> bool:
+    def navigate_back(self):
         """Navigate back
 
         Returns:
@@ -61,7 +62,7 @@ class WebActions(DriverActions):
         response = self.action_execute(web_actions["NAVIGATE_BACK_ID"], {}, None, "")
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def refresh(self) -> bool:
+    def refresh(self):
         """Refresh the current browser tab
 
         Returns:
@@ -70,7 +71,7 @@ class WebActions(DriverActions):
         response = self.action_execute(web_actions["REFRESH_ID"], {}, None, "")
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def navigate_to_url(self, url: str) -> bool:
+    def navigate_to_url(self, url):
         """Navigates to the specified URL in the active browser tab
 
         Args:
@@ -83,7 +84,7 @@ class WebActions(DriverActions):
         response = self.action_execute(web_actions["NAVIGATE_TO_URL_ID"], body, None, "")
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def get_current_url(self) -> str:
+    def get_current_url(self):
         """Retrieves the current URL from the active browser tab
 
         Returns:
@@ -94,7 +95,7 @@ class WebActions(DriverActions):
             return None
         return response.outputs["url"]
 
-    def scroll_window(self, pixels_x_axis: int, pixels_y_axis: int) -> bool:
+    def scroll_window(self, pixels_x_axis, pixels_y_axis):
         """Navigates to the specified URL in the active browser tab
 
         Args:
@@ -108,7 +109,7 @@ class WebActions(DriverActions):
         response = self.action_execute(web_actions["SCROLL_WINDOW_ID"], body, None, "")
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def select_all_options_by_value(self, by: By, by_value: str, option_value: str) -> bool:
+    def select_all_options_by_value(self, by, by_value, option_value):
         """Select all options that have a value matching the argument
 
         Args:
@@ -120,15 +121,10 @@ class WebActions(DriverActions):
             bool: True if action was performed successfully, False otherwise
         """
         body = {"value": option_value}
-        response = self.action_execute(
-            web_actions["SELECT_ALL_OPTIONS_BY_VALUE_ID"],
-            body,
-            by,
-            by_value,
-        )
+        response = self.action_execute(web_actions["SELECT_ALL_OPTIONS_BY_VALUE_ID"], body, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def switch_to_window(self, index: int) -> bool:
+    def switch_to_window(self, index):
         """Select a window using its index
 
         Args:
@@ -141,7 +137,7 @@ class WebActions(DriverActions):
         response = self.action_execute(web_actions["SWITCH_TO_WINDOW_ID"], body, None, "")
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def close_window(self, index: int) -> bool:
+    def close_window(self, index):
         """Closes the window with the given index
 
         Args:

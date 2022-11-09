@@ -37,12 +37,12 @@ class StepSettings:
 
     def __init__(
         self,
-        sleep_time: int = 0,
-        sleep_timing_type: SleepTimingType = None,
-        timeout: int = -1,
-        invert_result: bool = False,
-        always_pass: bool = False,
-        screenshot_condition: TakeScreenshotConditionType = TakeScreenshotConditionType.Failure,
+        sleep_time=0,
+        sleep_timing_type=None,
+        timeout=-1,
+        invert_result=False,
+        always_pass=False,
+        screenshot_condition=TakeScreenshotConditionType.Failure,
     ):
         self.sleep_time = sleep_time
         self.sleep_timing_type = sleep_timing_type

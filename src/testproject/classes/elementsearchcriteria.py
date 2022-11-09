@@ -29,45 +29,41 @@ class ElementSearchCriteria:
         _index (int): An index indicating which occurrence of the element should be used
     """
 
-    def __init__(self, find_by_type: FindByType, by_value: str, index: int = -1):
+    def __init__(self, find_by_type, by_value, index=-1):
         self._find_by_type = find_by_type
         self._by_value = by_value
         self._index = index
 
     @property
-    def find_by_type(self) -> FindByType:
+    def find_by_type(self):
         """Getter for the element locator strategy type"""
         return self._find_by_type
 
     @find_by_type.setter
-    def find_by_type(self, value: FindByType):
+    def find_by_type(self, value):
         """Setter for the element locator strategy type"""
         self._find_by_type = value
 
     @property
-    def by_value(self) -> str:
+    def by_value(self):
         """Getter for the element locator strategy value"""
         return self._by_value
 
     @by_value.setter
-    def by_value(self, value: str):
+    def by_value(self, value):
         """Setter for the element locator strategy value"""
         self._by_value = value
 
     @property
-    def index(self) -> int:
+    def index(self):
         """Getter for the element locator index"""
         return self._index
 
     @index.setter
-    def index(self, value: int):
+    def index(self, value):
         """Setter for the element locator index"""
         self._index = value
 
     def to_json(self):
         """Returns a JSON representation of the object to be sent to the Agent"""
-        return {
-            "byType": self._find_by_type.name,
-            "byValue": self._by_value,
-            "index": self._index,
-        }
+        return {"byType": self._find_by_type.name, "byValue": self._by_value, "index": self._index}

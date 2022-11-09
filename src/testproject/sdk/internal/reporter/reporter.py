@@ -17,7 +17,7 @@ import os
 
 from src.testproject.classes import ElementSearchCriteria
 from src.testproject.helpers import ReportHelper
-from src.testproject.rest.messages import StepReport, CustomTestReport
+from src.testproject.rest.messages import CustomTestReport, StepReport
 
 
 class Reporter:
@@ -33,16 +33,7 @@ class Reporter:
     def __init__(self, command_executor):
         self._command_executor = command_executor
 
-    def step(
-        self,
-        description: str,
-        message: str,
-        passed: bool,
-        screenshot: bool = False,
-        element: ElementSearchCriteria = None,
-        inputs: dict = None,
-        outputs: dict = None,
-    ):
+    def step(self, description, message, passed, screenshot=False, element=None, inputs=None, outputs=None):
         """Sends a step report to the Agent Client
 
         Args:
@@ -71,9 +62,9 @@ class Reporter:
             )
             self._command_executor.agent_client.report_step(step_report)
         else:
-            logging.debug(f"Step '{description}' {'passed' if passed else 'failed'}")
+            logging.debug("Step '{}' {}".format(description, "passed" if passed else "failed"))
 
-    def test(self, name: str = None, passed: bool = True, message: str = None):
+    def test(self, name=None, passed=True, message=None):
         """Sends a test report to the Agent Client
 
         Args:
@@ -92,18 +83,14 @@ class Reporter:
                         "when creating a driver instance to avoid duplicates in the report"
                     )
 
-            test_report = CustomTestReport(
-                name=name,
-                passed=passed,
-                message=message,
-            )
+            test_report = CustomTestReport(name=name, passed=passed, message=message)
 
             self._command_executor.agent_client.report_test(test_report)
 
         else:
-            logging.debug(f"Test '{name}' {'passed' if passed else 'failed'}")
+            logging.debug("Test '{}' {}".format(name, "passed" if passed else "failed"))
 
-    def disable_reports(self, disabled: bool):
+    def disable_reports(self, disabled):
         """Enables or disabled all reporting
 
         Args:
@@ -111,7 +98,7 @@ class Reporter:
         """
         self._command_executor.disable_reports = disabled
 
-    def disable_auto_test_reports(self, disabled: bool):
+    def disable_auto_test_reports(self, disabled):
         """Enables or disables automatically reporting a test to the Agent
 
         Args:
@@ -119,7 +106,7 @@ class Reporter:
         """
         self._command_executor.disable_auto_test_reports = disabled
 
-    def disable_command_reports(self, disabled: bool):
+    def disable_command_reports(self, disabled):
         """Enables or disables driver command reporting
 
         Args:
@@ -127,7 +114,7 @@ class Reporter:
         """
         self._command_executor.disable_command_reports = disabled
 
-    def disable_redaction(self, disabled: bool):
+    def disable_redaction(self, disabled):
         """Enables or disables driver command report redaction
 
         Args:
@@ -135,7 +122,7 @@ class Reporter:
         """
         self._command_executor.disable_redaction = disabled
 
-    def exclude_test_names(self, excluded_test_names: list):
+    def exclude_test_names(self, excluded_test_names):
         """Excludes a list of test names (as strings) from being reported
 
         Args:
