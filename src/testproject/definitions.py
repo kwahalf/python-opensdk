@@ -12,14 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import logging
+import os
 
-from importlib_metadata import metadata, PackageNotFoundError
+from importlib_metadata import PackageNotFoundError, metadata
+
 from src.testproject.sdk.exceptions import SdkException
 
 
-def get_sdk_version() -> str:
+def get_sdk_version():
     """Returns the current SDK version
 
     Returns:
@@ -35,7 +36,7 @@ def get_sdk_version() -> str:
         # This is OK, it just means that there's no previously installed version available
         pass
 
-    logging.debug(f"Version read from package metadata: {version}")
+    logging.debug("Version read from package metadata: {}".format(version))
 
     if version is None:
         # we're not dealing with an installed package, build uses an environment variable
@@ -43,7 +44,7 @@ def get_sdk_version() -> str:
         if version is None:
             raise SdkException("No SDK version definition found in metadata or environment variable")
 
-        logging.debug(f"Version read from environment variable: {version}")
+        logging.debug("Version read from environment variable: {}".format(version))
 
     # Sanitize the agent version to return only x.x.x
     if "-" in version:

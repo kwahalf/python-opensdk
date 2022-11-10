@@ -25,11 +25,11 @@ class ActionProxy:
         self._proxydescriptor = None
 
     @property
-    def proxydescriptor(self) -> ProxyDescriptor:
+    def proxydescriptor(self):
         """Getter for the proxydescriptor"""
         return self._proxydescriptor
 
     @proxydescriptor.setter
-    def proxydescriptor(self, value: ProxyDescriptor):
+    def proxydescriptor(self, value):
         """Setter for the proxydescriptor"""
         self._proxydescriptor = value

@@ -30,63 +30,59 @@ class ProxyDescriptor:
         _parameters (dict): parameters and their values associated with the action
     """
 
-    def __init__(
-        self,
-        guid: str,
-        classname: str,
-    ):
+    def __init__(self, guid, classname):
         self._guid = guid
         self._classname = classname
         self._by = None
         self._by_value = None
-        self._parameters: dict = {}
+        self._parameters = {}
 
     @property
-    def guid(self) -> str:
+    def guid(self):
         """Getter for the action GUID"""
         return self._guid
 
     @guid.setter
-    def guid(self, value: str):
+    def guid(self, value):
         """Setter for the action GUID"""
         self._guid = value
 
     @property
-    def classname(self) -> str:
+    def classname(self):
         """Getter for the action class name"""
         return self._classname
 
     @classname.setter
-    def classname(self, value: str):
+    def classname(self, value):
         """Setter for the action class name"""
         self._classname = value
 
     @property
-    def by(self) -> By:
+    def by(self):
         """Getter for the element locator strategy"""
         return self._by
 
     @by.setter
-    def by(self, value: By):
+    def by(self, value):
         """Setter for the element locator strategy"""
         self._by = value
 
     @property
-    def by_value(self) -> str:
+    def by_value(self):
         """Getter for the element locator value"""
         return self._by_value
 
     @by_value.setter
-    def by_value(self, value: str):
+    def by_value(self, value):
         """Setter for the element locator value"""
         self._by_value = value
 
     @property
-    def parameters(self) -> dict:
+    def parameters(self):
         """Getter for the action parameters"""
         return self._parameters
 
     @parameters.setter
-    def parameters(self, value: dict):
+    def parameters(self, value):
         """Setter for the action parameters"""
         self._parameters = value

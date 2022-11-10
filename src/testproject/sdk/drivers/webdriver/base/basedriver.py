@@ -20,12 +20,7 @@ from selenium.webdriver.remote.webdriver import WebDriver as RemoteWebDriver
 from src.testproject.classes import StepSettings
 from src.testproject.enums import EnvironmentVariable
 from src.testproject.enums.report_type import ReportType
-from src.testproject.helpers import (
-    ReportHelper,
-    LoggingHelper,
-    ConfigHelper,
-    AddonHelper,
-)
+from src.testproject.helpers import AddonHelper, ConfigHelper, LoggingHelper, ReportHelper
 from src.testproject.rest import ReportSettings
 from src.testproject.sdk.exceptions import SdkException
 from src.testproject.sdk.internal.agent import AgentClient
@@ -59,16 +54,16 @@ class BaseDriver(RemoteWebDriver):
 
     def __init__(
         self,
-        capabilities: dict,
-        token: str,
-        project_name: str,
-        job_name: str,
-        disable_reports: bool,
-        report_type: ReportType,
-        agent_url: str,
-        report_name: str,
-        report_path: str,
-        socket_session_timeout: int,
+        capabilities,
+        token,
+        project_name,
+        job_name,
+        disable_reports,
+        report_type,
+        agent_url,
+        report_name,
+        report_path,
+        socket_session_timeout,
     ):
 
         if BaseDriver.__instance is not None:
@@ -106,22 +101,21 @@ class BaseDriver(RemoteWebDriver):
                 # Can update job name at runtime if not specified.
                 os.environ[EnvironmentVariable.TP_UPDATE_JOB_NAME.value] = "True"
 
-        self._agent_client: AgentClient = AgentClient(
+        self._agent_client = AgentClient(
             token=self._token,
             capabilities=capabilities,
             agent_url=agent_url,
             report_settings=ReportSettings(self._project_name, self._job_name, report_type, report_name, report_path),
             socket_session_timeout=socket_session_timeout,
         )
-        self._agent_session: AgentSession = self._agent_client.agent_session
+        self._agent_session = self._agent_client.agent_session
         self.w3c = True if self._agent_session.dialect == "W3C" else False
 
         # Create a custom command executor to enable:
         # - automatic logging capabilities
         # - customized reporting settings
         self.command_executor = CustomCommandExecutor(
-            agent_client=self._agent_client,
-            remote_server_addr=self._agent_session.remote_address,
+            agent_client=self._agent_client, remote_server_addr=self._agent_session.remote_address
         )
 
         self.command_executor.disable_reports = disable_reports
@@ -132,9 +126,7 @@ class BaseDriver(RemoteWebDriver):
             self.command_executor.disable_auto_test_reports = True
 
         RemoteWebDriver.__init__(
-            self,
-            command_executor=self.command_executor,
-            desired_capabilities=self._agent_session.capabilities,
+            self, command_executor=self.command_executor, desired_capabilities=self._agent_session.capabilities
         )
 
         BaseDriver.__instance = self
@@ -149,15 +141,15 @@ class BaseDriver(RemoteWebDriver):
         return self.command_executor.settings
 
     @step_settings.setter
-    def step_settings(self, step_settings: StepSettings):
+    def step_settings(self, step_settings):
         self.command_executor.settings = step_settings
 
     def start_session(self, capabilities, browser_profile=None):
         """Sets capabilities and sessionId obtained from the Agent when creating the original session."""
         self.session_id = self._agent_session.session_id
-        logging.info(f"Session ID is {self.session_id}")
+        logging.info("Session ID is {}".format(self.session_id))
 
-    def report(self) -> Reporter:
+    def report(self):
         """Enables access to the TestProject reporting actions from the driver object
 
         Returns:
@@ -165,7 +157,7 @@ class BaseDriver(RemoteWebDriver):
         """
         return Reporter(self.command_executor)
 
-    def addons(self) -> AddonHelper:
+    def addons(self):
         """Enables access to the TestProject addon execution actions from the driver object
 
         Returns:
@@ -173,7 +165,7 @@ class BaseDriver(RemoteWebDriver):
         """
         return AddonHelper(self._agent_client, self.command_executor)
 
-    def pause(self, milliseconds: int):
+    def pause(self, milliseconds):
         self.command_executor.pause(milliseconds)
 
     def update_job_name(self, job_name):

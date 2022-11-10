@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from src.testproject.enums import ExecutionResultType
-from src.testproject.sdk.drivers.actions import Actions
-from src.testproject.sdk.internal.agent import AgentClient
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+
+from src.testproject.enums import ExecutionResultType
+from src.testproject.sdk.drivers.actions import Actions
 from src.testproject.sdk.drivers.actions.action_guids import driver_actions
+from src.testproject.sdk.internal.agent import AgentClient
 
 
 class DriverActions(Actions):
@@ -28,10 +29,10 @@ class DriverActions(Actions):
         timeout (int): timeout for action execution
     """
 
-    def __init__(self, agent_client: AgentClient, timeout: int):
+    def __init__(self, agent_client, timeout):
         super().__init__(agent_client, timeout)
 
-    def send_keys_to_window(self, keys) -> bool:
+    def send_keys_to_window(self, keys):
         """Send a list of keystrokes to the current browser
 
         Args:
@@ -45,7 +46,7 @@ class DriverActions(Actions):
         response = self.action_execute(driver_actions["SEND_KEYS_ID"], body, None, "")
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def is_selected(self, by: By, by_value: str) -> bool:
+    def is_selected(self, by, by_value):
         """Checks if an element is selected
 
         Args:
@@ -58,7 +59,7 @@ class DriverActions(Actions):
         response = self.action_execute(driver_actions["IS_SELECTED_ID"], {}, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def is_present(self, by: By, by_value: str) -> bool:
+    def is_present(self, by, by_value):
         """Checks if an element is present in the DOM
 
         Args:
@@ -71,7 +72,7 @@ class DriverActions(Actions):
         response = self.action_execute(driver_actions["IS_PRESENT_ID"], {}, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def is_visible(self, by: By, by_value: str) -> bool:
+    def is_visible(self, by, by_value):
         """Checks if an element is visible
 
         Args:
@@ -84,7 +85,7 @@ class DriverActions(Actions):
         response = self.action_execute(driver_actions["IS_VISIBLE_ID"], {}, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def contains_text(self, text_to_find: str, by: By, by_value: str) -> bool:
+    def contains_text(self, text_to_find, by, by_value):
         """Checks if the text of an element contains a given substring
 
         Args:
@@ -99,7 +100,7 @@ class DriverActions(Actions):
         response = self.action_execute(driver_actions["CONTAINS_TEXT_ID"], body, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def is_clickable(self, by: By, by_value: str) -> bool:
+    def is_clickable(self, by, by_value):
         """Checks if an element is clickable
 
         Args:
@@ -112,7 +113,7 @@ class DriverActions(Actions):
         response = self.action_execute(driver_actions["IS_CLICKABLE_ID"], {}, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def is_invisible(self, by: By, by_value: str) -> bool:
+    def is_invisible(self, by, by_value):
         """Checks if an element is invisible (or not present in the DOM)
 
         Args:
@@ -125,7 +126,7 @@ class DriverActions(Actions):
         response = self.action_execute(driver_actions["IS_INVISIBLE_ID"], {}, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def send_keys(self, text_to_type: str, by: By, by_value: str) -> bool:
+    def send_keys(self, text_to_type, by, by_value):
         """Sends the given text to the specified element
 
         Args:
@@ -140,7 +141,7 @@ class DriverActions(Actions):
         response = self.action_execute(driver_actions["TYPE_TEXT_ID"], body, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def clear_contents(self, by: By, by_value: str) -> bool:
+    def clear_contents(self, by, by_value):
         """Clears the contents of an element
 
         Args:
@@ -153,7 +154,7 @@ class DriverActions(Actions):
         response = self.action_execute(driver_actions["CLEAR_CONTENTS_ID"], {}, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def get_text(self, by: By, by_value: str) -> str:
+    def get_text(self, by, by_value):
         """Retrieves the visible text of an element
 
         Args:
@@ -168,7 +169,7 @@ class DriverActions(Actions):
             return None
         return response.outputs["text"]
 
-    def click(self, by: By, by_value: str) -> bool:
+    def click(self, by, by_value):
         """Clicks an element
 
         Args:
@@ -181,7 +182,7 @@ class DriverActions(Actions):
         response = self.action_execute(driver_actions["CLICK_ID"], {}, by, by_value)
         return response.executionresulttype == ExecutionResultType.Passed
 
-    def get_title(self) -> str:
+    def get_title(self):
         """Retrieves the current driver or application title
 
         Returns:

@@ -19,15 +19,10 @@ from packaging import version
 
 from src.testproject.enums import EnvironmentVariable
 from src.testproject.enums.report_type import ReportType
-from src.testproject.helpers import (
-    ReportHelper,
-    LoggingHelper,
-    ConfigHelper,
-    AddonHelper,
-)
+from src.testproject.helpers import AddonHelper, ConfigHelper, LoggingHelper, ReportHelper
 from src.testproject.rest import ReportSettings
 from src.testproject.rest.messages.agentstatusresponse import AgentStatusResponse
-from src.testproject.sdk.exceptions import SdkException, AgentConnectException
+from src.testproject.sdk.exceptions import AgentConnectException, SdkException
 from src.testproject.sdk.internal.agent import AgentClient
 from src.testproject.sdk.internal.helpers import GenericCommandExecutor
 from src.testproject.sdk.internal.reporter import Reporter
@@ -52,15 +47,15 @@ class Generic:
 
     def __init__(
         self,
-        token: str = None,
-        project_name: str = None,
-        job_name: str = None,
-        disable_reports: bool = False,
-        report_type: ReportType = ReportType.CLOUD_AND_LOCAL,
-        agent_url: str = None,
-        report_name: str = None,
-        report_path: str = None,
-        socket_session_timeout: int = AgentClient.NEW_SESSION_SOCKET_TIMEOUT_MS,
+        token=None,
+        project_name=None,
+        job_name=None,
+        disable_reports=False,
+        report_type=ReportType.CLOUD_AND_LOCAL,
+        agent_url=None,
+        report_name=None,
+        report_path=None,
+        socket_session_timeout=AgentClient.NEW_SESSION_SOCKET_TIMEOUT_MS,
     ):
         if Generic.__instance is not None:
             raise SdkException("A driver session already exists")
@@ -72,15 +67,16 @@ class Generic:
             logging.info("Using token from environment variable...")
         self._token = env_token if env_token is not None else token
 
-        agent_status_response: AgentStatusResponse = AgentClient.get_agent_version(self._token)
+        agent_status_response = AgentClient.get_agent_version(self._token)
 
         if version.parse(agent_status_response.tag) < version.parse(Generic.MIN_GENERIC_DRIVER_SUPPORTED_VERSION):
             raise AgentConnectException(
-                f"Your current Agent version {agent_status_response.tag} does not support the Generic driver. "
-                f"Please upgrade your Agent to the latest version and try again"
+                "Your current Agent version {} does not support the Generic driver. Please upgrade your Agent to the latest version and try again".format(
+                    agent_status_response.tag
+                )
             )
         else:
-            logging.info(f"Current Agent version {agent_status_response.tag} does support Generic driver")
+            logging.info("Current Agent version {} does support Generic driver".format(agent_status_response.tag))
 
         self.session_id = None
 
@@ -102,7 +98,7 @@ class Generic:
 
         capabilities = {"platformName": "ANY"}
 
-        self._agent_client: AgentClient = AgentClient(
+        self._agent_client = AgentClient(
             token=self._token,
             capabilities=capabilities,
             agent_url=agent_url,
@@ -110,7 +106,7 @@ class Generic:
             socket_session_timeout=socket_session_timeout,
         )
 
-        self._agent_session: AgentSession = self._agent_client.agent_session
+        self._agent_session = self._agent_client.agent_session
 
         self.command_executor = GenericCommandExecutor(agent_client=self._agent_client)
 
@@ -124,13 +120,13 @@ class Generic:
     def start_session(self, capabilities, browser_profile=None):
         """Sets capabilities and sessionId obtained from the Agent when creating the original session."""
         self.session_id = self._agent_session.session_id
-        logging.info(f"Session ID is {self.session_id}")
+        logging.info("Session ID is {}".format(self.session_id))
 
-    def report(self) -> Reporter:
+    def report(self):
         """Enables access to the TestProject reporting actions from the driver object"""
         return Reporter(self.command_executor)
 
-    def addons(self) -> AddonHelper:
+    def addons(self):
         """Enables access to the TestProject addon execution actions from the driver object
 
         Returns:

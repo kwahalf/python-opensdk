@@ -24,15 +24,12 @@ class GenericCommandExecutor(ReportingCommandExecutor):
         agent_client (AgentClient): Client used to communicate with the TestProject Agent
     """
 
-    def __init__(self, agent_client: AgentClient):
+    def __init__(self, agent_client):
         ReportingCommandExecutor.__init__(
-            self,
-            agent_client=agent_client,
-            command_executor=self,
-            remote_connection=None,
+            self, agent_client=agent_client, command_executor=self, remote_connection=None
         )
 
-    def execute(self, command: str, params: dict, skip_reporting: bool = False):
+    def execute(self, command, params, skip_reporting=False):
         """Not implemented for generic driver objects
 
         Args:

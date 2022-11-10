@@ -22,7 +22,7 @@ from functools import wraps
 from src.testproject.helpers.activesessionhelper import get_active_driver_instance
 
 
-def report_assertion_errors(func=None, *, screenshot: bool = False):
+def report_assertion_errors(func=None, screenshot=False, *_):
     """Enables automatic logging of failed assertions, including a screenshot when screenshot argument is True."""
 
     def _report_assertion_errors(_func):
@@ -42,11 +42,11 @@ def report_assertion_errors(func=None, *, screenshot: bool = False):
 
                 _, line, function, text = tb_info[line_index]
                 driver = get_active_driver_instance()
-                message = f"Assertion failed on line {line} in {function}"
+                message = "Assertion failed on line {} in {}".format(line, function)
                 description, message = __handle_step_report_details(description, message)
                 driver.report().step(
                     description=description,
-                    message=f"Assertion failed on line {line} in {function}",
+                    message="Assertion failed on line {} in {}".format(line, function),
                     passed=False,
                     screenshot=screenshot,
                 )

@@ -22,18 +22,18 @@ class ResultField:
         _is_output (bool): True if the field is an output field, False otherwise
     """
 
-    def __init__(self, name: str = None, value=None, output: bool = None):
+    def __init__(self, name=None, value=None, output=None):
         self._name = name
         self._value = value
         self._is_output = output
 
     @property
-    def name(self) -> str:
+    def name(self):
         """Getter for the field name"""
         return self._name
 
     @name.setter
-    def name(self, value: str):
+    def name(self, value):
         """Setter for the field name"""
         self._name = value
 
@@ -48,11 +48,11 @@ class ResultField:
         self._value = val
 
     @property
-    def is_output(self) -> bool:
+    def is_output(self):
         """Getter for the field is_output indication"""
         return self._is_output
 
     @is_output.setter
-    def is_output(self, value: bool):
+    def is_output(self, value):
         """Setter for the field is_output indication"""
         self._is_output = value

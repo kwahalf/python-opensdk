@@ -28,7 +28,7 @@ class RedactHelper:
     def __init__(self, command_executor):
         self._command_executor = command_executor
 
-    def redact_command(self, command: str, params: dict):
+    def redact_command(self, command, params):
         """Redacts sensitive contents (passwords) so they do not appear in the reports
 
         Args:
@@ -50,7 +50,7 @@ class RedactHelper:
 
         return params
 
-    def _redaction_required(self, element_id: str) -> bool:
+    def _redaction_required(self, element_id):
         """Checks if the element should be redacted
 
         Args:
@@ -71,7 +71,7 @@ class RedactHelper:
 
         return self._is_secured_element(element_id)
 
-    def _is_android_password_element(self, element_id: str) -> bool:
+    def _is_android_password_element(self, element_id):
         """Checks if the element is an Android password element
 
         Args:
@@ -92,7 +92,7 @@ class RedactHelper:
         response_value = get_attribute_response.get("value")
         return False if response_value is None else response_value.casefold() == "true"
 
-    def _is_secured_element(self, element_id: str) -> bool:
+    def _is_secured_element(self, element_id):
         """Checks if the element is a secured element (an HTML or iOS password element)
 
         Args:
@@ -109,7 +109,4 @@ class RedactHelper:
         get_attribute_response = self._command_executor.execute(
             Command.GET_ELEMENT_ATTRIBUTE, get_attribute_params, True
         )
-        return get_attribute_response["value"] in [
-            "password",
-            "XCUIElementTypeSecureTextField",
-        ]
+        return get_attribute_response["value"] in ["password", "XCUIElementTypeSecureTextField"]

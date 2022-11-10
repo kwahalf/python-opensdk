@@ -13,15 +13,15 @@
 # limitations under the License.
 
 import logging
+import os
 import uuid
-
 from distutils.util import strtobool
 from enum import Enum, unique
 from http import HTTPStatus
-from urllib.parse import urljoin, urlparse, ParseResult
+from urllib.parse import ParseResult, urljoin, urlparse
 
 import requests
-import os
+from packaging import version
 from requests import HTTPError
 
 from src.testproject.classes import ActionExecutionResponse
@@ -32,20 +32,20 @@ from src.testproject.executionresults import OperationResult
 from src.testproject.helpers import ConfigHelper, SeleniumHelper
 from src.testproject.rest import ReportSettings
 from src.testproject.rest.messages import (
+    AddonExecutionResponse,
+    CustomTestReport,
+    DriverCommandReport,
     SessionRequest,
     SessionResponse,
-    DriverCommandReport,
     StepReport,
-    CustomTestReport,
-    AddonExecutionResponse,
 )
 from src.testproject.rest.messages.agentstatusresponse import AgentStatusResponse
 from src.testproject.sdk.addons import ActionProxy
 from src.testproject.sdk.exceptions import (
-    SdkException,
     AgentConnectException,
     InvalidTokenException,
     ObsoleteVersionException,
+    SdkException,
 )
 from src.testproject.sdk.exceptions.addonnotinstalled import AddonNotInstalledException
 from src.testproject.sdk.internal.agent.agent_client_singleton import AgentClientSingleton
@@ -53,10 +53,10 @@ from src.testproject.sdk.internal.agent.reports_queue import ReportsQueue
 from src.testproject.sdk.internal.agent.reports_queue_batch import ReportsQueueBatch
 from src.testproject.sdk.internal.session import AgentSession
 from src.testproject.tcp import SocketManager
-from packaging import version
 
 
-class AgentClient(metaclass=AgentClientSingleton):
+class AgentClient(object):
+    __metaclass__ = AgentClientSingleton
     """Client used to communicate with the TestProject Agent process
 
     Args:
@@ -88,16 +88,9 @@ class AgentClient(metaclass=AgentClientSingleton):
     NEW_SESSION_SOCKET_TIMEOUT_MS = 120 * 1000
 
     # Class variable containing the current known Agent version
-    __agent_version: str = None
+    __agent_version = None
 
-    def __init__(
-        self,
-        token: str,
-        capabilities: dict,
-        agent_url: str,
-        report_settings: ReportSettings,
-        socket_session_timeout: int,
-    ):
+    def __init__(self, token, capabilities, agent_url, report_settings, socket_session_timeout):
         self.agent_url = agent_url
         self._is_local_execution = True
         self._agent_session = None
@@ -125,11 +118,11 @@ class AgentClient(metaclass=AgentClientSingleton):
         return self._agent_session
 
     @property
-    def report_settings(self) -> ReportSettings:
+    def report_settings(self):
         """Getter for the ReportSettings object"""
         return self._report_settings
 
-    def __verify_local_reports_supported(self, report_type: ReportType):
+    def __verify_local_reports_supported(self, report_type):
         """Verify that target Agent supports local reports, otherwise throw an exception.
 
         Args:
@@ -142,15 +135,16 @@ class AgentClient(metaclass=AgentClientSingleton):
             self.MIN_LOCAL_REPORT_SUPPORTED_VERSION
         ):
             raise AgentConnectException(
-                f"Target Agent version [{self.__agent_version}] doesn't support local reports."
-                f" Upgrade the Agent to the latest version and try again."
+                "Target Agent version [{}] doesn't support local reports. Upgrade the Agent to the latest version and try again.".format(
+                    self.__agent_version
+                )
             )
 
     def __start_session(self):
         """Starts a new development session with the Agent"""
         sdk_version = ConfigHelper.get_sdk_version()
 
-        logging.info(f"SDK version: {sdk_version}")
+        logging.info("SDK version: {}".format(sdk_version))
 
         self._request_session_from_agent()
 
@@ -163,7 +157,7 @@ class AgentClient(metaclass=AgentClientSingleton):
             parsed_report_url = urlparse(self._agent_response.local_report_url)
             report_url = ParseResult(
                 scheme=parsed_report_url.scheme,
-                netloc=f"{urlparse(self._remote_address).hostname}:{parsed_report_url.port}",
+                netloc="{}:{}".format(urlparse(self._remote_address).hostname, parsed_report_url.port),
                 path=parsed_report_url.path,
                 params=parsed_report_url.params,
                 query=parsed_report_url.query,
@@ -180,9 +174,7 @@ class AgentClient(metaclass=AgentClientSingleton):
         )
 
         SocketManager.instance().open_socket(
-            urlparse(self._remote_address).hostname,
-            self._agent_response.dev_socket_port,
-            self._agent_response.uuid,
+            urlparse(self._remote_address).hostname, self._agent_response.dev_socket_port, self._agent_response.uuid
         )
 
         logging.info("Development session started...")
@@ -194,7 +186,7 @@ class AgentClient(metaclass=AgentClientSingleton):
                 logging.warning(warning)
 
     @staticmethod
-    def can_reuse_session() -> bool:
+    def can_reuse_session():
         """Determine whether the current Agent version supports session reuse
 
         Returns:
@@ -214,7 +206,7 @@ class AgentClient(metaclass=AgentClientSingleton):
         """
         session_request = SessionRequest(self._capabilities, self._report_settings)
 
-        logging.info(f"Session request: {session_request.to_json()}")
+        logging.info("Session request: {}".format(session_request.to_json()))
 
         try:
             response = self.send_request(
@@ -224,9 +216,11 @@ class AgentClient(metaclass=AgentClientSingleton):
                 timeout=self._session_socket_timeout,
             )
         except requests.exceptions.ConnectionError:
-            logging.error(f"Could not start new session on {self._remote_address}. Is your Agent running?")
+            logging.error("Could not start new session on {}. Is your Agent running?".format(self._remote_address))
             logging.error("You can download the TestProject Agent from https://app.testproject.io/#/agents")
-            raise AgentConnectException(f"Connection error trying to connect to Agent on {self._remote_address}")
+            raise AgentConnectException(
+                "Connection error trying to connect to Agent on {}".format(self._remote_address)
+            )
 
         if not response.passed:
             self.__handle_new_session_error(response)
@@ -251,19 +245,17 @@ class AgentClient(metaclass=AgentClientSingleton):
             job_name (str): new job name to use for the current execution
         """
         if strtobool(os.getenv("TP_UPDATE_JOB_NAME")):
-            logging.info(f"Updating job name to: {job_name}")
+            logging.info("Updating job name to: {}".format(job_name))
             try:
                 response = self.send_request(
-                    "PUT",
-                    urljoin(self._remote_address, Endpoint.DevelopmentSession.value),
-                    {"jobName": job_name},
+                    "PUT", urljoin(self._remote_address, Endpoint.DevelopmentSession.value), {"jobName": job_name}
                 )
                 if not response.passed:
                     logging.error("Failed to update job name")
             except requests.exceptions.RequestException:
                 logging.error("Failed to update job name")
 
-    def send_request(self, method, path, body=None, params=None, timeout=None) -> OperationResult:
+    def send_request(self, method, path, body=None, params=None, timeout=None):
         """Sends HTTP request to Agent
 
         Args:
@@ -288,7 +280,7 @@ class AgentClient(metaclass=AgentClientSingleton):
             elif method == "PUT":
                 response = session.put(path, headers={"Authorization": self._token}, json=body)
             else:
-                raise SdkException(f"Unsupported HTTP method {method} in send_request()")
+                raise SdkException("Unsupported HTTP method {} in send_request()".format(method))
 
         response_json = {}
         # For some successful calls, the response body will be empty
@@ -310,7 +302,7 @@ class AgentClient(metaclass=AgentClientSingleton):
                 response_json if response_json else None,
             )
 
-    def send_action_execution_request(self, codeblock_guid: str, body: dict) -> ActionExecutionResponse:
+    def send_action_execution_request(self, codeblock_guid, body):
         """Sends HTTP request to Agent
 
         Args:
@@ -322,12 +314,7 @@ class AgentClient(metaclass=AgentClientSingleton):
         """
 
         response = self.send_request(
-            "POST",
-            urljoin(
-                urljoin(self._remote_address, Endpoint.ActionExecution.value),
-                codeblock_guid,
-            ),
-            body,
+            "POST", urljoin(urljoin(self._remote_address, Endpoint.ActionExecution.value), codeblock_guid), body
         )
 
         if not response.passed:
@@ -342,7 +329,7 @@ class AgentClient(metaclass=AgentClientSingleton):
         return ActionExecutionResponse(result, response.message, result_data)
 
     @staticmethod
-    def get_agent_version(token: str):
+    def get_agent_version(token):
         """Requests the current Agent status
 
         Args:
@@ -371,12 +358,12 @@ class AgentClient(metaclass=AgentClientSingleton):
                 )
         except HTTPError:
             raise AgentConnectException(
-                f"Agent returned HTTP {response.status_code} when trying to retrieve Agent status"
+                "Agent returned HTTP {} when trying to retrieve Agent status".format(response.status_code)
             )
 
         return AgentStatusResponse(agent_version)
 
-    def report_driver_command(self, driver_command_report: DriverCommandReport):
+    def report_driver_command(self, driver_command_report):
         """Sends command report to the Agent
 
         Args:
@@ -388,7 +375,7 @@ class AgentClient(metaclass=AgentClientSingleton):
             block=False,
         )
 
-    def report_step(self, step_report: StepReport):
+    def report_step(self, step_report):
         """Sends step report to the Agent
 
         Args:
@@ -401,7 +388,7 @@ class AgentClient(metaclass=AgentClientSingleton):
             block=False,
         )
 
-    def report_test(self, test_report: CustomTestReport):
+    def report_test(self, test_report):
         """Sends test report to the Agent
 
         Args:
@@ -414,7 +401,7 @@ class AgentClient(metaclass=AgentClientSingleton):
             block=False,
         )
 
-    def execute_proxy(self, action: ActionProxy) -> AddonExecutionResponse:
+    def execute_proxy(self, action):
         """Sends a custom action to the Agent
         Args:
             action (ActionProxy): The custom action to be executed
@@ -432,8 +419,9 @@ class AgentClient(metaclass=AgentClientSingleton):
 
         if operation_result.status_code == HTTPStatus.NOT_FOUND:
             logging.error(
-                f"Action [{action.proxydescriptor.classname}] in addon [{action.proxydescriptor.guid}]"
-                f" is not installed in your account."
+                "Action [{}] in addon [{}] is not installed in your account.".format(
+                    action.proxydescriptor.classname, action.proxydescriptor.guid
+                )
             )
             raise AddonNotInstalledException
 
@@ -452,7 +440,7 @@ class AgentClient(metaclass=AgentClientSingleton):
         )
 
     @staticmethod
-    def _create_action_proxy_payload(action: ActionProxy) -> dict:
+    def _create_action_proxy_payload(action):
         """Creates a payload dictionary that will be transformed to a action JSON request body
         Args:
             action (ActionProxy): The action for which a payload should be created
@@ -471,7 +459,7 @@ class AgentClient(metaclass=AgentClientSingleton):
         return payload
 
     @staticmethod
-    def __handle_new_session_error(response: OperationResult):
+    def __handle_new_session_error(response):
         """Handles errors occurring on creation of a new session with the Agent
 
         Args:
@@ -489,13 +477,15 @@ class AgentClient(metaclass=AgentClientSingleton):
             raise SdkException(error_message)
         elif response.status_code == HTTPStatus.NOT_ACCEPTABLE:
             logging.error(
-                f"Failed to initialize a session with the Agent - obsolete SDK version {ConfigHelper.get_sdk_version()}"
+                "Failed to initialize a session with the Agent - obsolete SDK version {}".format(
+                    ConfigHelper.get_sdk_version()
+                )
             )
             raise ObsoleteVersionException(response.message)
         else:
             logging.error("Failed to initialize a session with the Agent")
             raise AgentConnectException(
-                f"Agent responded with HTTP status {response.status_code}: [{response.message}]"
+                "Agent responded with HTTP status {}: [{}]".format(response.status_code, response.message)
             )
 
     def __check_local_execution(self):
@@ -507,7 +497,7 @@ class AgentClient(metaclass=AgentClientSingleton):
     def stop(self):
         self._reports_queue.stop()
         if self._agent_response and self._agent_response.local_report and self._is_local_execution:
-            logging.info(f"Execution Report: {self._agent_response.local_report}")
+            logging.info("Execution Report: {}".format(self._agent_response.local_report))
 
 
 @unique

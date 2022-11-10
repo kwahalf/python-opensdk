@@ -30,7 +30,7 @@ class CustomTestReport:
         _message (str): A message that goes with the test
     """
 
-    def __init__(self, name: str, passed: bool, message: str = None):
+    def __init__(self, name, passed, message=None):
         self._name = name
         self._passed = passed
         self._message = message

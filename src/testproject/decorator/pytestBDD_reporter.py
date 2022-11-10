@@ -12,13 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-from src.testproject.helpers.activesessionhelper import get_active_driver_instance
-from src.testproject.enums import EnvironmentVariable
+
 from decorator import decorator
+
+from src.testproject.enums import EnvironmentVariable
+from src.testproject.helpers.activesessionhelper import get_active_driver_instance
 
 
 @decorator
-def pytestBDD_reporter(func, screenshot: bool = True, *args, **kwargs):
+def pytestBDD_reporter(func, screenshot=True, *args, **kwargs):
     """Enables automatic logging of Gherkin syntax, including  a screenshot when screenshot argument is True, by default
     screenshots are taken only when a step fails.
     Args:
@@ -63,12 +65,7 @@ def report_step(driver, step, screenshot, message):
     """Report pytest-bdd  step"""
     driver.report().disable_reports(False)
     step_description = "{} {}".format(step.keyword, step.name)
-    driver.report().step(
-        description=step_description,
-        message=message,
-        passed=not step.failed,
-        screenshot=screenshot,
-    )
+    driver.report().step(description=step_description, message=message, passed=not step.failed, screenshot=screenshot)
     driver.report().disable_reports(True)
 
 

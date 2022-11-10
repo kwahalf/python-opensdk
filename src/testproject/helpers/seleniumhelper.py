@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from appium.webdriver.common.mobileby import MobileBy
 from selenium.webdriver.common.by import By
+
+from appium.webdriver.common.mobileby import MobileBy
 from src.testproject.classes import ElementSearchCriteria
 from src.testproject.enums import FindByType
 from src.testproject.sdk.exceptions import SdkException
@@ -23,7 +24,7 @@ class SeleniumHelper:
     """Contains helper methods for Selenium actions, mostly locator-related"""
 
     @staticmethod
-    def create_search_criteria(by: By, by_value: str):
+    def create_search_criteria(by, by_value):
         """Translator method to create element search criteria to send to the Agent
 
         Args:
@@ -55,10 +56,10 @@ class SeleniumHelper:
         elif by == MobileBy.IOS_PREDICATE:
             return ElementSearchCriteria(FindByType.IOSPREDICATE, by_value)
         else:
-            raise SdkException(f"Did not recognize locator strategy {by}")
+            raise SdkException("Did not recognize locator strategy {}".format(by))
 
     @staticmethod
-    def create_addon_locator(by: By, by_value: str) -> dict:
+    def create_addon_locator(by, by_value):
         """Creates and returns an locator used in an addon based on a locator strategy
 
         Args:
@@ -90,4 +91,4 @@ class SeleniumHelper:
         elif by == MobileBy.IOS_PREDICATE:
             return {"iosPredicate": by_value}
         else:
-            raise SdkException(f"Did not recognize locator strategy {by}")
+            raise SdkException("Did not recognize locator strategy {}".format(by))

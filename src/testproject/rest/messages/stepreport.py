@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from src.testproject.rest.messages.reportitemtype import ReportItemType
 import uuid
 
 from src.testproject.classes import ElementSearchCriteria
+from src.testproject.rest.messages.reportitemtype import ReportItemType
 
 
 class StepReport:
@@ -40,16 +40,7 @@ class StepReport:
         _output_params (dict): Dictionary of step output parameters - name:value
     """
 
-    def __init__(
-        self,
-        description: str,
-        message: str,
-        passed: bool,
-        screenshot: str = None,
-        element: ElementSearchCriteria = None,
-        inputs: dict = None,
-        outputs: dict = None,
-    ):
+    def __init__(self, description, message, passed, screenshot=None, element=None, inputs=None, outputs=None):
         self._description = description
         self._message = message
         self._passed = passed
@@ -58,7 +49,7 @@ class StepReport:
         self._input_params = inputs
         self._output_params = outputs
 
-    def to_json(self) -> dict:
+    def to_json(self):
         """Generates a dict containing the JSON representation of the step payload"""
         json = {
             "guid": str(uuid.uuid4()),

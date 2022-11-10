@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import logging
-import socket
 import select
+import socket
 
 from src.testproject.sdk.exceptions import AgentConnectException
 
@@ -49,9 +49,9 @@ class SocketManager:
                 SocketManager.__socket = None
                 logging.info("Connection to Agent closed successfully")
             except socket.error as msg:
-                logging.error(f"Failed to close socket connection to Agent: {msg}")
+                logging.error("Failed to close socket connection to Agent: {}".format(msg))
 
-    def open_socket(self, socket_address: str, socket_port: int, uuid: str):
+    def open_socket(self, socket_address, socket_port, uuid):
         """Opens a connection to the Agent development socket
 
         Args:
@@ -94,14 +94,14 @@ class SocketManager:
 
             if not connected:
                 raise AgentConnectException(
-                    f"SDK failed to connect to the Agent via a TCP socket on port {socket_port}.\n"
+                    "SDK failed to connect to the Agent via a TCP socket on port {}.\n".format(socket_port)
                     + "Please check if you have any interfering software installed, and disable it."
                 )
 
-        logging.info(f"Socket connection to {socket_address}:{socket_port} established successfully")
+        logging.info("Socket connection to {}:{} established successfully".format(socket_address, socket_port))
 
     @staticmethod
-    def is_connected() -> bool:
+    def is_connected():
         """Sends a simple message to the socket to see if it's connected
 
         Returns:
@@ -114,5 +114,5 @@ class SocketManager:
             SocketManager.__socket.send("test".encode("utf-8"))
             return True
         except socket.error as msg:
-            logging.warning(f"Socket not connected: {msg}")
+            logging.warning("Socket not connected: {}".format(msg))
             return False

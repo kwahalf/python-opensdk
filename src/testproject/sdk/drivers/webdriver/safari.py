@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from selenium.webdriver import DesiredCapabilities
-from src.testproject.sdk.internal.agent import AgentClient
 
 from src.testproject.enums.report_type import ReportType
 from src.testproject.sdk.drivers.webdriver.base import BaseDriver
+from src.testproject.sdk.internal.agent import AgentClient
 
 
 class Safari(BaseDriver):
@@ -33,16 +33,16 @@ class Safari(BaseDriver):
 
     def __init__(
         self,
-        desired_capabilities: dict = DesiredCapabilities.SAFARI,
-        token: str = None,
-        project_name: str = None,
-        job_name: str = None,
-        disable_reports: bool = False,
-        report_type: ReportType = ReportType.CLOUD_AND_LOCAL,
-        agent_url: str = None,
-        report_name: str = None,
-        report_path: str = None,
-        socket_session_timeout: int = AgentClient.NEW_SESSION_SOCKET_TIMEOUT_MS,
+        desired_capabilities=DesiredCapabilities.SAFARI,
+        token=None,
+        project_name=None,
+        job_name=None,
+        disable_reports=False,
+        report_type=ReportType.CLOUD_AND_LOCAL,
+        agent_url=None,
+        report_name=None,
+        report_path=None,
+        socket_session_timeout=AgentClient.NEW_SESSION_SOCKET_TIMEOUT_MS,
     ):
         super().__init__(
             capabilities=desired_capabilities,

@@ -23,10 +23,10 @@ class AgentStatusResponse:
         _tag (str): The Agent version
     """
 
-    def __init__(self, tag: str):
+    def __init__(self, tag):
         self._tag = tag
 
     @property
-    def tag(self) -> str:
+    def tag(self):
         """Getter for the Agent version field ('tag' in the JSON response)"""
         return self._tag

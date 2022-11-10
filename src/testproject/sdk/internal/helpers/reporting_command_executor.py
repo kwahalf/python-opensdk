@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 import inspect
+import logging
 import time
 
 from selenium.webdriver.remote.command import Command
@@ -21,7 +21,7 @@ from selenium.webdriver.remote.command import Command
 from src.testproject.classes import StepSettings
 from src.testproject.helpers import ReportHelper
 from src.testproject.helpers.step_helper import StepHelper
-from src.testproject.rest.messages import DriverCommandReport, CustomTestReport
+from src.testproject.rest.messages import CustomTestReport, DriverCommandReport
 from src.testproject.sdk.internal.agent import AgentClient
 from src.testproject.sdk.internal.helpers.redact_helper import RedactHelper
 from src.testproject.sdk.internal.reporter import Reporter
@@ -47,7 +47,7 @@ class ReportingCommandExecutor:
         _excluded_test_names (list): contains a list of test names that should not be reported
     """
 
-    def __init__(self, agent_client: AgentClient, command_executor, remote_connection):
+    def __init__(self, agent_client, command_executor, remote_connection):
         self._agent_client = agent_client
         self._command_executor = command_executor
         self._disable_reports = False
@@ -58,59 +58,57 @@ class ReportingCommandExecutor:
         self._latest_known_test_name = ReportHelper.infer_test_name()
         self._excluded_test_names = list()
         self._step_helper = StepHelper(
-            remote_connection,
-            agent_client.agent_session.dialect == "W3C",
-            agent_client.agent_session.session_id,
+            remote_connection, agent_client.agent_session.dialect == "W3C", agent_client.agent_session.session_id
         )
         self._settings = StepSettings()
 
     @property
-    def disable_reports(self) -> bool:
+    def disable_reports(self):
         """Getter for the disable_reports flag"""
         return self._disable_reports
 
     @disable_reports.setter
-    def disable_reports(self, value: bool):
+    def disable_reports(self, value):
         """Setter for the disable_reports flag"""
         self._disable_reports = value
 
     @property
-    def disable_auto_test_reports(self) -> bool:
+    def disable_auto_test_reports(self):
         """Getter for the disable_auto_test_reports flag"""
         return self._disable_auto_test_reports
 
     @disable_auto_test_reports.setter
-    def disable_auto_test_reports(self, value: bool):
+    def disable_auto_test_reports(self, value):
         """Setter for the disable_auto_test_reports flag"""
         self._disable_auto_test_reports = value
 
     @property
-    def disable_command_reports(self) -> bool:
+    def disable_command_reports(self):
         """Getter for the disable_command_reports flag"""
         return self._disable_command_reports
 
     @disable_command_reports.setter
-    def disable_command_reports(self, value: bool):
+    def disable_command_reports(self, value):
         """Setter for the disable_command_reports flag"""
         self._disable_command_reports = value
 
     @property
-    def disable_redaction(self) -> bool:
+    def disable_redaction(self):
         """Getter for the disable_redaction flag"""
         return self._disable_redaction
 
     @disable_redaction.setter
-    def disable_redaction(self, value: bool):
+    def disable_redaction(self, value):
         """Setter for the disable_redaction flag"""
         self._disable_redaction = value
 
     @property
-    def excluded_test_names(self) -> list:
+    def excluded_test_names(self):
         """Getter for the list of excluded test names"""
         return self._excluded_test_names
 
     @excluded_test_names.setter
-    def excluded_test_names(self, value: list):
+    def excluded_test_names(self, value):
         """Setter for the list of excluded test names"""
         self._excluded_test_names = value
 
@@ -125,7 +123,7 @@ class ReportingCommandExecutor:
         return self._settings
 
     @settings.setter
-    def settings(self, value: StepSettings):
+    def settings(self, value):
         """Setter for the settings object."""
         self._settings = value
 
@@ -135,16 +133,16 @@ class ReportingCommandExecutor:
         return self._step_helper
 
     @property
-    def test_name(self) -> str:
+    def test_name(self):
         """Getter for the latest known test name"""
         return self._latest_known_test_name
 
     @test_name.setter
-    def test_name(self, new_name: str):
+    def test_name(self, new_name):
         """Setter for the latest known test name"""
         self._latest_known_test_name = new_name
 
-    def _report_command(self, command: str, params: dict, result: dict, passed: bool):
+    def _report_command(self, command, params, result, passed):
         """Reports a driver command to the TestProject platform
 
         Args:
@@ -161,7 +159,7 @@ class ReportingCommandExecutor:
 
         # Report commands to the agent only if reports are not disabled
         if self._disable_reports or self.disable_command_reports:
-            logging.debug(f"Command [{command}] - [{'Passed' if passed is True else 'Failed'}]")
+            logging.debug("Command [{}] - [{'Passed' if passed is True else 'Failed'}]".format(command))
             return
 
         if not self._disable_redaction:
@@ -178,9 +176,7 @@ class ReportingCommandExecutor:
 
         # Handle step result and message.
         passed, step_message = self.step_helper.handle_step_result(
-            step_result=passed,
-            invert_result=self.settings.invert_result,
-            always_pass=self.settings.always_pass,
+            step_result=passed, invert_result=self.settings.invert_result, always_pass=self.settings.always_pass
         )
         screenshot = (
             self.create_screenshot()
@@ -227,18 +223,20 @@ class ReportingCommandExecutor:
             # only report those tests that have been identified as one when their names were inferred
             if self._disable_reports:
                 # test reporting has been disabled by the user
-                logging.debug(f"Test [{self._latest_known_test_name}] - [Passed]")
+                logging.debug("Test [{}] - [Passed]".format(self._latest_known_test_name))
                 return
 
             if self._latest_known_test_name in self._excluded_test_names:
                 # test has been marked as 'to be excluded, so do not report it
-                logging.debug(f"Test [{self._latest_known_test_name}] - Reporting skipped (marked as 'To be excluded')")
+                logging.debug(
+                    "Test [{}] - Reporting skipped (marked as 'To be excluded')".format(self._latest_known_test_name)
+                )
                 return
 
             custom_test_report = CustomTestReport(name=self._latest_known_test_name, passed=True)
             self.agent_client.report_test(custom_test_report)
 
-    def create_screenshot(self) -> str:
+    def create_screenshot(self):
         """Creates a screenshot (PNG) and returns it as a base64 encoded string
 
         Returns:
@@ -249,8 +247,8 @@ class ReportingCommandExecutor:
         try:
             return create_screenshot_response["value"]
         except KeyError as ke:
-            logging.error(f"Error occurred creating a screenshot: {ke}")
-            logging.error(f"Response from RemoteWebDriver: {create_screenshot_response}")
+            logging.error("Error occurred creating a screenshot: {}".format(ke))
+            logging.error("Response from RemoteWebDriver: {}".format(create_screenshot_response))
             return None
 
     def clear_stash(self):
@@ -264,7 +262,7 @@ class ReportingCommandExecutor:
                 self._stashed_command = None
 
     @staticmethod
-    def is_command_passed(response: dict) -> bool:
+    def is_command_passed(response):
         """Determine command result based on response using state and status.
 
         Args:
@@ -276,7 +274,7 @@ class ReportingCommandExecutor:
         # Both None and 0 response status values indicate command execution was OK
         return True if response.get("status") in [None, 0] else False
 
-    def pause(self, milliseconds: int):
+    def pause(self, milliseconds):
         """Pause test execution for the specified duration
 
         Args:
@@ -286,28 +284,23 @@ class ReportingCommandExecutor:
 
         # Handling sleep before execution
         self.step_helper.handle_sleep(
-            sleep_timing_type=self.settings.sleep_timing_type,
-            sleep_time=self.settings.sleep_time,
+            sleep_timing_type=self.settings.sleep_timing_type, sleep_time=self.settings.sleep_time
         )
         # Sleep for...
         time.sleep(milliseconds / 1000.0)
 
         # Handling sleep after execution
         self.step_helper.handle_sleep(
-            sleep_timing_type=self.settings.sleep_timing_type,
-            sleep_time=self.settings.sleep_time,
-            step_executed=True,
+            sleep_timing_type=self.settings.sleep_timing_type, sleep_time=self.settings.sleep_time, step_executed=True
         )
         result, step_message = self.step_helper.handle_step_result(
-            step_result=True,
-            invert_result=self.settings.invert_result,
-            always_pass=self.settings.always_pass,
+            step_result=True, invert_result=self.settings.invert_result, always_pass=self.settings.always_pass
         )
 
         # Handle screenshot condition
         screenshot = self.step_helper.take_screenshot(self.settings.screenshot_condition, result)
         Reporter(self._command_executor).step(
-            description=f"Pause for {{{{{milliseconds}}}}} ms",
+            description="Pause for {{{{{}}}}} ms".format(milliseconds),
             message=step_message,
             inputs={"milliseconds": milliseconds},
             passed=result,

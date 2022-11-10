@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
 import logging
+import os
 
 from src.testproject import definitions
 
@@ -22,7 +22,7 @@ class ConfigHelper:
     """Contains helper methods for SDK configuration"""
 
     @staticmethod
-    def get_agent_service_address() -> str:
+    def get_agent_service_address():
         """Returns the Agent service address as defined in the TP_AGENT_URL environment variable.
             Defaults to http://127.0.0.1:8585 (localhost)
 
@@ -41,11 +41,11 @@ class ConfigHelper:
             # Since we support remote execution, the address variable does not have to hold localhost or
             # 127.0.0.1 in it's value
             address = address.replace("localhost", "127.0.0.1")
-        logging.info(f"Using {address} as the Agent URL")
+        logging.info("Using {} as the Agent URL".format(address))
         return address
 
     @staticmethod
-    def get_developer_token() -> str:
+    def get_developer_token():
         """Returns the TestProject developer token as defined in the TP_DEV_TOKEN environment variable
 
         Returns:
@@ -54,7 +54,7 @@ class ConfigHelper:
         return os.getenv("TP_DEV_TOKEN")
 
     @staticmethod
-    def get_sdk_version() -> str:
+    def get_sdk_version():
         """Returns the SDK version as defined in the definitions module
 
         Returns:

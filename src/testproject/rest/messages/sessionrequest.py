@@ -34,8 +34,8 @@ class SessionRequest:
         _report_path (str): The path of the generated report.
     """
 
-    def __init__(self, capabilities: dict, report_settings: ReportSettings):
-        self._capabilities: dict = capabilities
+    def __init__(self, capabilities, report_settings):
+        self._capabilities = capabilities
         self._sdk_version = ConfigHelper.get_sdk_version()
         self._language = "Python"
         self._project_name = report_settings.project_name

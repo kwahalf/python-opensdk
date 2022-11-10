@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from src.testproject.sdk.drivers.webdriver import Remote, Generic
+from src.testproject.sdk.drivers.webdriver import Generic, Remote
 from src.testproject.sdk.drivers.webdriver.base import BaseDriver
 from src.testproject.sdk.exceptions import SdkException
 

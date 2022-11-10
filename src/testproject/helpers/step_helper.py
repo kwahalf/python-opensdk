@@ -22,24 +22,18 @@ from src.testproject.enums import SleepTimingType, TakeScreenshotConditionType
 
 
 class StepHelper:
-    def __init__(self, executor: RemoteConnection, w3c: bool, session_id: str):
+    def __init__(self, executor, w3c, session_id):
         self.executor = executor
         self.w3c = w3c
         self.session_id = session_id
 
     def handle_timeout(self, timeout):
         if timeout > 0:
-            logging.debug(f"Setting driver implicit wait to {timeout} milliseconds.")
+            logging.debug("Setting driver implicit wait to {} milliseconds.".format(timeout))
             if self.w3c:
-                self.executor.execute(
-                    Command.SET_TIMEOUTS,
-                    {"sessionId": self.session_id, "implicit": int(timeout)},
-                )
+                self.executor.execute(Command.SET_TIMEOUTS, {"sessionId": self.session_id, "implicit": int(timeout)})
             else:
-                self.executor.execute(
-                    Command.IMPLICIT_WAIT,
-                    {"sessionId": self.session_id, "ms": float(timeout)},
-                )
+                self.executor.execute(Command.IMPLICIT_WAIT, {"sessionId": self.session_id, "ms": float(timeout)})
 
     @staticmethod
     def handle_sleep(sleep_timing_type, sleep_time, command=None, step_executed=False):
@@ -50,13 +44,14 @@ class StepHelper:
                 sleep_timing_type_condition = SleepTimingType.After if step_executed else SleepTimingType.Before
                 if sleep_timing_type is sleep_timing_type_condition:
                     logging.debug(
-                        f"Step is designed to sleep for {sleep_time} milliseconds"
-                        f" {sleep_timing_type.name} execution."
+                        "Step is designed to sleep for {} milliseconds {} execution.".format(
+                            sleep_time, sleep_timing_type.name
+                        )
                     )
                     sleep(sleep_time / 1000.0)
 
     @staticmethod
-    def take_screenshot(take_screenshot_condition: TakeScreenshotConditionType, passed: bool) -> bool:
+    def take_screenshot(take_screenshot_condition, passed):
         """Returns true if the step report should include screenshot."""
         if take_screenshot_condition is TakeScreenshotConditionType.Always:
             return True
@@ -69,25 +64,24 @@ class StepHelper:
         return False
 
     @staticmethod
-    def handle_step_result(
-        step_result: bool,
-        base_msg: str = None,
-        invert_result: bool = False,
-        always_pass: bool = False,
-    ) -> tuple:
+    def handle_step_result(step_result, base_msg=None, invert_result=False, always_pass=False):
         """Handles the step result.
 
         Returns a tuple of the changed result and a formatted step message for reporting.
         """
         result_str, result_opposite_str = ("Passed", "Failed") if step_result else ("Failed", "Passed")
-        invert_msg = f"Step result {result_str} inverted to {result_opposite_str}.{os.linesep}" if invert_result else ""
+        invert_msg = (
+            "Step result {} inverted to {}.{}".format(result_str, result_opposite_str, os.linesep)
+            if invert_result
+            else ""
+        )
         failure_behavior_msg = (
-            f"Failure behaviour 'Always Pass' is configured," f" step result is forcibly set as Passed.{os.linesep}"
+            "Failure behaviour 'Always Pass' is configured, step result is forcibly set as Passed.{}".format(os.linesep)
             if always_pass
             else ""
         )
         # Create a base message if none was provided.
-        base_msg = base_msg if base_msg else f"Step {result_str}."
+        base_msg = base_msg if base_msg else "Step {}.".format(result_str)
         # Add a line break to the base message.
         base_msg = base_msg if base_msg.endswith(os.linesep) else base_msg + os.linesep
 
@@ -97,4 +91,4 @@ class StepHelper:
         # Handle always pass
         step_result = True if always_pass else step_result
 
-        return step_result, f"{base_msg}{invert_msg}{failure_behavior_msg}"
+        return step_result, "{}{}{}".format(base_msg, invert_msg, failure_behavior_msg)
